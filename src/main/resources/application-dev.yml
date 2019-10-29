@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: 00-campus
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+  #热部署配置
+  devtools:
+    restart:
+      enabled: true #开启热部署
+      additional-paths: src/main/java #设置重启的目录
+      #exclude: WEB-INF/** #classpath目录下的WEB-INF文件夹内容修改不重启
+  mvc:
+    static-path-pattern: /static/**
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: -1
+########################################################
+###FREEMARKER (FreeMarkerAutoConfiguration)
+########################################################
+  freemarker:
+    allow-request-override: false
+    cache: false
+    check-template-location: true
+    charset: UTF-8
+    content-type: text/html
+    expose-request-attributes: false
+    expose-session-attributes: false
+    expose-spring-macro-helpers: false
+    request-context-attribute: request
+    suffix: .ftl
+    template-loader-path: classpath:/templates/
+    settings:
+      template_update_delay: 0
+      auto_import: common/common.ftl as com
+      datetime_format: yyyy-MM-dd
+      classic_compatible: true
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    session: 
+      timeout: 10000
+#mybatis:
+#  mapper-locations: classpath:mappers/*.xml
+#eureka:
+#  instance:
+#    prefer-ip-address: true #注册服务的时候使用服务的ip地址
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:2000/eureka/

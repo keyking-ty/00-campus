@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.RepairMapper">
+	<resultMap id="RepairDataResultMap" type="com.telit.info.data.business.RepairData">
+		<result column="id" property="id" />
+		<result column="content" property="content" />
+		<result column="phone" property="phone" />
+		<result column="time" property="time" />
+		<result column="user_id" property="userId" />
+		<result column="school_id" property="schoolId" />
+		<result column="pics" property="pics" />
+		<result column="stu" property="stu" />
+		<result column="operator" property="operator" />
+		<result column="userName" property="userName" />
+		<result column="schoolName" property="schoolName" />
+		<result column="operatorName" property="operatorName" />
+	</resultMap>
+	<resultMap id="UserResultMap" type="com.telit.info.data.admin.User">
+		<result column="id" property="id" />
+		<result column="bz" property="bz" />
+		<result column="true_name" property="trueName" />
+		<result column="user_name" property="userName" />
+		<result column="icon_type" property="iconType" />
+		<result column="icon_name" property="iconName" />
+		<result column="icon_url" property="iconUrl" />
+		<result column="operates" property="operates" />
+		<result column="roles" property="roles" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_repair
+		LEFT JOIN t_app_user ON t_app_user.id=t_repair.user_id
+		LEFT JOIN t_user ON t_user.id=t_repair.operator
+		LEFT JOIN t_school ON t_school.id=t_repair.school_id
+		WHERE t_repair.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="RepairDataResultMap">
+		SELECT t_repair.*,
+		t_app_user.real_name userName,
+		t_school.school_name schoolName,
+		t_user.true_name operatorName
+		FROM t_repair
+		LEFT JOIN t_app_user ON t_app_user.id=t_repair.user_id
+		LEFT JOIN t_user ON t_user.id=t_repair.operator
+		LEFT JOIN t_school ON t_school.id=t_repair.school_id
+		WHERE t_repair.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+	<select id="getLinkOne" resultMap="RepairDataResultMap">
+		SELECT t_repair.*,
+		t_app_user.real_name userName,
+		t_school.school_name schoolName,
+		t_user.true_name operatorName
+		FROM t_repair
+		LEFT JOIN t_app_user ON t_app_user.id=t_repair.user_id
+		LEFT JOIN t_user ON t_user.id=t_repair.operator
+		LEFT JOIN t_school ON t_school.id=t_repair.school_id
+		WHERE t_repair.id = #{repairId}
+	</select>
+	<select id="alotUsers" resultMap="UserResultMap">
+		SELECT t_user.*
+		FROM t_user
+		LEFT JOIN t_user_role ON t_user_role.user_id=t_user.id
+		LEFT JOIN t_role_school ON t_role_school.role_id=t_user_role.role_id
+		WHERE t_user.id IN (
+			SELECT t_user_role.user_id FROM t_user_role WHERE t_user_role.role_id IN (3,4,5)
+		)
+		AND t_role_school.school_id = #{schoolId}
+	</select>
+	<select id="list" resultMap="RepairDataResultMap">
+		SELECT t_repair.*,
+		t_app_user.real_name userName,
+		t_school.school_name schoolName
+		FROM t_repair
+		LEFT JOIN t_app_user ON t_app_user.id=t_repair.user_id
+		LEFT JOIN t_user ON t_user.id=t_repair.operator
+		LEFT JOIN t_school ON t_school.id=t_repair.school_id
+		<where>
+			1=1
+			<if test="userId > 0">
+			 	AND t_repair.user_id=#{userId}
+			</if>
+		</where>
+		<if test="start > 0 and len > 0">
+			LIMIT #{start},#{len}
+		</if>
+	</select>
+</mapper>

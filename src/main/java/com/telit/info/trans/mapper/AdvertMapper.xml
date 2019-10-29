@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.AdvertMapper">
+	<resultMap id="AdvertResultMap" type="com.telit.info.data.app.Advert">
+		<result column="id" property="id" />
+		<result column="adv_type" property="advType" />
+		<result column="adv_title" property="advTitle" />
+		<result column="adv_img" property="advImg" />
+		<result column="adv_lnk" property="advLnk" />
+		<result column="adv_info" property="advInfo" />
+		<result column="create_date" property="createDate" />
+		<result column="adv_sort" property="advSort" />
+		<result column="adv_sta" property="advSta" />
+		<result column="auther" property="auther" />
+		<result column="start_date" property="startDate" />
+		<result column="time_last" property="timeLast" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(t_advert.id) FROM t_advert
+		<if test="conds != null">
+			WHERE ${conds}
+		</if>
+	</select>
+	<select id="queryList" resultMap="AdvertResultMap">
+		SELECT * FROM t_advert
+		<if test="conds != null">
+			WHERE ${conds}
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+</mapper>

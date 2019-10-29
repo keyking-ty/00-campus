@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.AlbumMapper">
+	<resultMap id="AlbumResultMap" type="com.telit.info.data.business.Album">
+		<result column="id" property="id" />
+		<result column="school_id" property="schoolId" />
+		<result column="schoolName" property="schoolName" />
+		<result column="name" property="name" />
+		<result column="title" property="title" />
+		<result column="content" property="content" />
+		<result column="change_des" property="changeDes" />
+		<result column="type" property="type" />
+		<result column="auther" property="auther" />
+		<result column="auther_des" property="autherDes" />
+		<result column="pay_type" property="payType" />
+		<result column="role_id" property="roleId" />
+		<result column="icon_url" property="iconUrl" />
+		<result column="income" property="income" />
+		<result column="playCount" property="playCount" />
+		<result column="total" property="total" />
+		<result column="free" property="free" />
+		<result column="subscribeCount" property="subscribeCount" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(t_album.id)
+		FROM t_album
+		LEFT JOIN t_school ON t_school.id=t_album.school_id
+		LEFT JOIN (
+			SELECT
+				t_curriculum.album_id aId,
+				SUM(t_curriculum.play_count) playCount,
+				SUM(t_curriculum.income) income,
+				COUNT(t_curriculum.id) total,
+				SUM(t_curriculum.subscribe_count) subscribeCount,
+				SUM(instr(t_curriculum.pay_type,'免费')) free
+			FROM 
+				t_curriculum
+			GROUP BY t_curriculum.album_id
+		) sum_data ON sum_data.aId=t_album.id
+		WHERE t_album.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="lid > 0">
+			AND t_album.role_id = #{lid}
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="AlbumResultMap">
+		SELECT t_album.*,
+		t_school.school_name schoolName,
+		sum_data.*
+		FROM t_album
+		LEFT JOIN t_school ON t_school.id=t_album.school_id
+		LEFT JOIN (
+			SELECT
+				t_curriculum.album_id aId,
+				SUM(t_curriculum.play_count) playCount,
+				SUM(t_curriculum.income) income,
+				COUNT(t_curriculum.id) total,
+				SUM(t_curriculum.subscribe_count) subscribeCount,
+				SUM(instr(t_curriculum.pay_type,'免费')) free
+			FROM 
+				t_curriculum
+			GROUP BY t_curriculum.album_id
+		) sum_data ON sum_data.aId=t_album.id
+		WHERE t_album.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="lid > 0">
+			AND t_album.role_id = #{lid}
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+</mapper>

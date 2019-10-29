@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.RoleMapper">
+	<resultMap id="RoleResultMap" type="com.telit.info.data.admin.Role">
+		<result column="id" property="id" />
+		<result column="bz" property="bz" />
+		<result column="name" property="name" />
+		<result column="remarks" property="remarks" />
+		<result column="operator" property="operator" />
+	</resultMap>
+	<select id="queryRoleCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_role
+		<if test="value != null">
+			WHERE ${value}
+		</if>
+	</select>
+	<select id="queryRole" resultMap="RoleResultMap">
+		SELECT * FROM t_role
+		<if test="conds != null">
+			WHERE ${conds}
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		<if test="len > 0">
+			LIMIT #{cur},#{len}
+		</if>
+	</select>
+	<select id="queryRoleByUser" resultMap="RoleResultMap">
+		SELECT * FROM t_role
+		<where>
+			t_role.id ${op} (SELECT t_user_role.role_id FROM t_user_role WHERE t_user_role.user_id=#{uid})
+		</where>
+		ORDER BY t_role.id ASC
+	</select>
+</mapper>

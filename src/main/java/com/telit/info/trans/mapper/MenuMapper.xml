@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.MenuMapper">
+	<resultMap id="MenuResultMap" type="com.telit.info.data.admin.Menu">
+		<result column="id" property="id" />
+		<result column="menu_id" property="menuId" />
+		<result column="icon" property="icon" />
+		<result column="name" property="name" />
+		<result column="state" property="state" />
+		<result column="url" property="url" />
+		<result column="p_id" property="pId" />
+		<result column="operates" property="operates" />
+	</resultMap>
+	<select id="getTopMenusByRole" resultMap="MenuResultMap">
+		SELECT t_menu.*
+		FROM t_menu
+		LEFT JOIN t_role_menu ON t_role_menu.menu_id = t_menu.id
+		<where>
+			<if test="roleId > 0">
+				AND t_role_menu.role_id=#{roleId}
+			</if>
+			<if test="parentId > 0">
+				AND t_menu.p_id=#{parentId}
+			</if>
+		</where>
+		ORDER BY t_menu.id ASC
+	</select>
+	<select id="getAllMenusByRole" parameterType="java.lang.Integer" resultMap="MenuResultMap">
+		SELECT * FROM t_menu
+		<where>
+			t_menu.p_id != -1
+			AND t_menu.id IN (SELECT t_role_menu.menu_id FROM t_role_menu WHERE t_role_menu.role_id=#{value})
+		</where>
+		ORDER BY t_menu.id ASC
+	</select>
+</mapper>

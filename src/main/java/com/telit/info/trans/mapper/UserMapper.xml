@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.UserMapper">
+	<resultMap id="UserResultMap" type="com.telit.info.data.admin.User">
+		<result column="id" property="id" />
+		<result column="bz" property="bz" />
+		<result column="true_name" property="trueName" />
+		<result column="user_name" property="userName" />
+		<result column="icon_type" property="iconType" />
+		<result column="icon_name" property="iconName" />
+		<result column="icon_url" property="iconUrl" />
+		<result column="operates" property="operates" />
+		<result column="roles" property="roles" />
+	</resultMap>
+	<select id="queryUserCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_user
+		LEFT JOIN t_user_role ON t_user.id = t_user_role.user_id
+		LEFT JOIN t_role ON t_user_role.role_id = t_role.id
+		<if test="value != null">
+			WHERE ${value}
+		</if>
+	</select>
+	<select id="queryUser" resultMap="UserResultMap">
+		SELECT t_user.*,
+		GROUP_CONCAT(t_role.`name`) AS roles
+		FROM t_user
+		LEFT JOIN t_user_role ON t_user.id = t_user_role.user_id 
+		LEFT JOIN t_role ON t_user_role.role_id = t_role.id 
+		<if test="conds != null">
+			WHERE ${conds}
+		</if>
+		GROUP BY t_user.id
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+</mapper>

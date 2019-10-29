@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.SchoolMapper">
+	<resultMap id="SchoolResultMap" type="com.telit.info.data.business.School">
+		<result column="id" property="id" />
+		<result column="school_name" property="schoolName" />
+		<result column="province" property="province" />
+		<result column="city" property="city" />
+		<result column="area" property="area" />
+		<result column="other_area" property="otherArea" />
+		<result column="city_hot" property="cityHot" />
+		<result column="portal" property="portal" />
+		<result column="rjrz" property="rjrz" />
+		<result column="str_citylink" property="connetIp" />
+		<result column="cityhot_login" property="loginUrl" />
+		<result column="cityhot_exit" property="exitUrl" />
+		<result column="cityhot_online" property="onlineUrl" />
+		<result column="city_sbname" property="terminalId" />
+		<result column="wifi_name" property="wifiName" />
+		<result column="net_type" property="netType" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_school
+		WHERE t_school.id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="SchoolResultMap">
+		SELECT * FROM t_school
+		WHERE t_school.id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+	<select id="queryByRole" parameterType="java.lang.Integer" resultMap="SchoolResultMap">
+		SELECT * FROM t_school
+		WHERE t_school.id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{value}
+		)
+	</select>
+</mapper>

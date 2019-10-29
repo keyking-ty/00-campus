@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.GoodsMapper">
+	<resultMap id="GoodsDataResultMap" type="com.telit.info.data.business.GoodsData">
+		<result column="id" property="id" />
+		<result column="type" property="type" />
+		<result column="content" property="content" />
+		<result column="phone" property="phone" />
+		<result column="time" property="time" />
+		<result column="user_id" property="userId" />
+		<result column="school_id" property="schoolId" />
+		<result column="pics" property="pics" />
+		<result column="userName" property="userName" />
+		<result column="schoolName" property="schoolName" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_goods
+		LEFT JOIN t_app_user ON t_app_user.id=t_goods.user_id
+		LEFT JOIN t_school ON t_school.id=t_goods.school_id
+		WHERE t_goods.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="GoodsDataResultMap">
+		SELECT t_goods.*,
+		t_app_user.real_name userName,
+		t_school.school_name schoolName
+		FROM t_goods
+		LEFT JOIN t_app_user ON t_app_user.id=t_goods.user_id
+		LEFT JOIN t_school ON t_school.id=t_goods.school_id
+		WHERE t_goods.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+	<select id="getLinkOne" resultMap="GoodsDataResultMap">
+		SELECT t_goods.*,
+		t_app_user.real_name userName,
+		t_school.school_name schoolName
+		FROM t_goods
+		LEFT JOIN t_app_user ON t_app_user.id=t_goods.user_id
+		LEFT JOIN t_school ON t_school.id=t_goods.school_id
+		WHERE t_goods.id = #{goodsId}
+	</select>
+	<select id="list" resultMap="GoodsDataResultMap">
+		SELECT t_goods.*,
+		t_app_user.real_name userName,
+		t_school.school_name schoolName
+		FROM t_goods
+		LEFT JOIN t_app_user ON t_app_user.id=t_goods.user_id
+		LEFT JOIN t_school ON t_school.id=t_goods.school_id
+		<where>
+			1=1
+			<if test="schoolId > 0">
+			 	AND t_goods.school_id=#{schoolId}
+			</if>
+			<if test="userId > 0">
+			 	AND t_goods.user_id=#{userId}
+			</if>
+		</where>
+		<if test="start > 0 and len > 0">
+			LIMIT #{start},#{len}
+		</if>
+	</select>
+</mapper>

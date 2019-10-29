@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.InfoMapper">
+	<resultMap id="InfoDataResultMap" type="com.telit.info.data.business.InfoData">
+		<result column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="type" property="type" />
+		<result column="content" property="content" />
+		<result column="time" property="time" />
+		<result column="author" property="author" />
+		<result column="read_count" property="readCount" />
+		<result column="sort" property="sort" />
+		<result column="school_id" property="schoolId" />
+		<result column="author_id" property="authorId" />
+		<result column="authorName" property="authorName" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_info
+		LEFT JOIN t_user ON t_user.id=t_info.author_id
+		WHERE 1=1 
+		<if test="ss != null">
+			AND ${ss}
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="InfoDataResultMap">
+		SELECT t_info.*,
+		t_user.true_name authorName
+		FROM t_info
+		LEFT JOIN t_user ON t_user.id=t_info.author_id
+		WHERE 1=1 
+		<if test="ss != null">
+			AND ${ss}
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+	<select id="loadByType" resultMap="InfoDataResultMap">
+		SELECT t_info.*,
+		t_user.true_name authorName
+		FROM t_info
+		LEFT JOIN t_user ON t_user.id=t_info.author_id
+		WHERE t_info.type = #{type} AND instr(t_info.school_id,#{schoolId}) > 0
+		ORDER BY t_info.sort,t_info.time
+		LIMIT #{start},#{len}
+	</select>
+</mapper>

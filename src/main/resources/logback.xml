@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- 控制台打印日志的相关配置 --> 
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"> 
+    <!-- 日志格式 -->
+    <encoder>
+        <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <!-- 过滤低于级别 -->
+      <level>DEBUG</level>
+    </filter>
+  </appender>
+
+  <!-- 文件保存日志的相关配置 --> 
+  <appender name="INFO-OUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 保存日志文件的路径 -->
+    <file>D:\logs\web.log</file>
+    <!-- 日志格式 -->
+    <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss} [%class:%line] - %m%n</pattern>
+    </encoder>
+    <!-- 日志级别过滤器 -->
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <!-- 过滤低于级别 -->
+      <level>DEBUG</level>
+    </filter>
+    <!-- 循环政策：基于时间创建日志文件 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- 日志文件名格式 -->
+      <fileNamePattern>D:\logs\web.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <!-- 最大保存时间：90天-->
+      <maxHistory>90</maxHistory>
+    </rollingPolicy>
+  </appender>
+  <!-- 基于dubug处理日志：具体控制台或者文件对日志级别的处理还要看所在appender配置的filter，如果没有配置filter，则使用root配置 -->
+  <root level="DEBUG">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="INFO-OUT" />
+  </root>
+</configuration>

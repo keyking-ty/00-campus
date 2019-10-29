@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.AlbumHotMapper">
+	<resultMap id="AlbumHotResultMap" type="com.telit.info.data.business.AlbumHot">
+		<result column="id" property="id" />
+		<result column="type" property="type" />
+		<result column="course" property="course" />
+		<result column="album_id" property="albumId" />
+		<result column="order_num" property="orderNum" />
+		<result column="start_date" property="startDate" />
+		<result column="time_last" property="timeLast" />
+		<result column="sta" property="sta" />
+		<result column="create_time" property="createTime" />
+		<result column="auther" property="auther" />
+		<result column="albumName" property="albumName" />
+		<result column="albumTitle" property="albumTitle" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(t_album_hot.id)
+		FROM t_album_hot
+		LEFT JOIN t_album ON t_album.id=t_album_hot.album_id
+		LEFT JOIN t_school ON t_school.id=t_album.school_id
+		WHERE t_album.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="AlbumHotResultMap">
+		SELECT t_album_hot.*,
+		t_album.name albumName,
+		t_album.title albumTitle
+		FROM t_album_hot
+		LEFT JOIN t_album ON t_album.id=t_album_hot.album_id
+		LEFT JOIN t_school ON t_school.id=t_album.school_id
+		WHERE t_album.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+</mapper>

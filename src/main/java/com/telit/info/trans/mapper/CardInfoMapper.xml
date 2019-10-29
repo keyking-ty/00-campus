@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.CardInfoMapper">
+	<resultMap id="CardInfoResultMap" type="com.telit.info.data.business.CardInfo">
+		<result column="id" property="id" />
+		<result column="card_number" property="cardNumber" />
+		<result column="card_type" property="cardType" />
+		<result column="operator" property="operator" />
+		<result column="predict_value" property="predictValue" />
+		<result column="province" property="province" />
+		<result column="city" property="city" />
+		<result column="area" property="area" />
+		<result column="school_id" property="schoolId" />
+		<result column="schoolName" property="schoolName" />
+		<result column="statu" property="statu" />
+		<result column="create_time" property="createTime" />
+		<result column="auther" property="auther" />
+		<result column="meals" property="meals" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_card_info
+		INNER JOIN t_school ON t_school.id=t_card_info.school_id
+		WHERE t_card_info.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="operators != null">
+			AND t_card_info.operator IN (${operators})
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="CardInfoResultMap">
+		SELECT t_card_info.*,
+		t_school.school_name schoolName
+		FROM t_card_info
+		INNER JOIN t_school ON t_school.id=t_card_info.school_id
+		WHERE t_card_info.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="operators != null">
+			AND t_card_info.operator IN (${operators})
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+</mapper>

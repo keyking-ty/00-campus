@@ -1,0 +1,30 @@
+spring:
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss 
+  profiles: 
+    active: dev
+imageType: jpg,png,jpeg,JPG,PNG,JPEG
+uploadFilePath: "D:\\upload"
+importNumberLog: "D:\\importLog"
+domainUrl: https://www.00xy.com.cn
+ali:
+  appId: 2018020102122302
+  payPrivateKey: MIIEpAIBAAKCAQEA2e78ywoxvx+wWsld+CBsIAg8X2rerzySo4lq4vkGeLTGOcmXAV4KUmCKOPfTflHxxzHMKQg3DidERtFgMp1df7UVQvItqqN9IFIN+V92FBmzL0IkSWPvHpyrN92VQf1hbUJy5XqCc7kYDbUFdItvAzY8EBAK5KF0ifth6D/ghZY7EzuuTdy3T/SLvEy+cWjxMumUw3sk7SC0Lcb1/65oXlG9bIRxAdUP7KRClkI0rLeETJ7JiB0RFvP6JQmMXcV8AO7Tj7duU5QLH+pj+k7o/OdaF41FyyYuzb6hPJe6KHT9AvoHRiK503DH9EXXiZaWw9n7JVM9m+iUcjmmkO4f3wIDAQABAoIBAQCFBiaRvMg+tBYOZGmSYh/9sWlAiNgiOKP9ZIy0vHJhzV5NuaoNsJw2Si00trkGmvgssU3AIf6RChDX9Ud1va5rnFm9AlwzkxV2W/+hns5RWJqSFxpVHcXAdrrgH8XSgNouOeguAIiOIIX5H+yTheSeHkWtPE2Z3p9m9eV+QTdH8hmdcPNZp6EYQent3ZLU+pmvmOCK7RwyeLdGIzrQ2wUlBS/PJb++Q8bwxMFq7hvuguEWuzc399DlYiG+lSC+3Z7GAWfF5bjFNw/L7hDakSb+CmR8kA4zEbHkSSuE93AjrdB4JEpLViT8KwytzUhnKL4O4UfaiaAKm6jCMc16U3XxAoGBAPkHNuZ1JGz2uUevhGYADfCOHxWCgxM0d8m1AXjIamsZcFOwAzcDMH6DT9AA7BV/t67jSoSchhXhAFI0ysp8mMv3kiM6/RCIWuk4Xa6yctFdP/TBY3Ihc3Cj9c4LOJRLhuXvz14qq806FGiSahLU62O9hpMfaAnuOvUCqp7neQf5AoGBAOAI6u2MdPm4w3PrdQNLLFU82lDYgWbySBsIQh0Z13W6GtSjYG+kTChG0beNkGPqWyAXBeNiTpqE5WWlzON6I9OdKGf4O4lS4z6RaBXGZ1/PGpcZesuI4dSrowFLS+DWR/78w3JCZx8qg7fCtYRjQnASeE0giaZ4thfqAOezsMyXAoGANpl3VwX+C4n4y5fW/ooqhECU3iF0XaSWUvpFrVa7xmmYcDDaM5iWbFacDC33lSsgec7JytOKrodbi6qZf9XbpnTMbL8FNze+Pv4lxCTJ+c9pM1+nTyG4bsz0Gs3pBNKebBGtNKdEbcW7LcZUTXazeXXXaLBtHihGcuu3vwlfRvkCgYAySe4qKogrcgz1nVnjxmEKNSGwWhkZ+bKz1rO4go95zq+tIYtJJDEwLU1wDWfm9blEx8Y7l1qbls9DdOc7/LPEEZf7Vp5Ooft+lPcvRBz6RavrVP3aaDyBF5H8fWFn89GvbB+XK06okUuF2UATmpBUReEZNv+PDbOaRJ21ZQF/uwKBgQC2rTCIBbLnTB48e8sR20/9XcTJxK5Q4ygunTmW0Bd/4GaK412loJKxPIzXgsP/y5zCD4y89Tzv0boqbRgZdXW3oHpGc9CRnwMCn+eLplezWdlkxm8cpHSHVk91mCHY1laxcY/cEKL0eBr8TO/Oskc+u6kW8kjmEa1rQESlSIuxYA==
+  payPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2e78ywoxvx+wWsld+CBsIAg8X2rerzySo4lq4vkGeLTGOcmXAV4KUmCKOPfTflHxxzHMKQg3DidERtFgMp1df7UVQvItqqN9IFIN+V92FBmzL0IkSWPvHpyrN92VQf1hbUJy5XqCc7kYDbUFdItvAzY8EBAK5KF0ifth6D/ghZY7EzuuTdy3T/SLvEy+cWjxMumUw3sk7SC0Lcb1/65oXlG9bIRxAdUP7KRClkI0rLeETJ7JiB0RFvP6JQmMXcV8AO7Tj7duU5QLH+pj+k7o/OdaF41FyyYuzb6hPJe6KHT9AvoHRiK503DH9EXXiZaWw9n7JVM9m+iUcjmmkO4f3wIDAQAB
+  bckMoneyUrl: "https://openapi.alipay.com/gateway.do"
+wx:
+  appId: wx9e9680f461659a39
+  appSecret: 9293fb678d06554012aac918299c4dc5
+  mchId: 1498650302
+  appkey: e139d22b6141e0c130cd3f31f58a4b4b
+  domain: www.telit-qingcong.com
+sms:
+  urlPath: http://smssh1.253.com/msg/send/json
+  regAccount: N154336_N7130557
+  regPwd: lFb4iRWLNn5407
+  marketAccount: M250501_M1512555
+  marketPwd: qSQVJD2LwO6d75
+jpush:
+  appKey:  aef3066ed086d8be791b79b0
+  masterSecret: 34299ece030c10558ecd98e8

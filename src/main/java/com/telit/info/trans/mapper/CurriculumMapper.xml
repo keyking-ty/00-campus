@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.CurriculumMapper">
+	<resultMap id="CurriculumResultMap" type="com.telit.info.data.business.Curriculum">
+		<result column="id" property="id" />
+		<result column="album_id" property="albumId" />
+		<result column="school_id" property="schoolId" />
+		<result column="schoolName" property="schoolName" />
+		<result column="name" property="name" />
+		<result column="description" property="description" />
+		<result column="play_time" property="playTime" />
+		<result column="play_count" property="playCount" />
+		<result column="subscribe_count" property="subscribeCount" />
+		<result column="pay_type" property="payType" />
+		<result column="praise" property="praise" />
+		<result column="stu" property="stu" />
+		<result column="sell_price" property="sellPrice" />
+		<result column="role_id" property="roleId" />
+		<result column="file_url" property="fileUrl" />
+		<result column="income" property="income" />
+		<result column="commentNum" property="commentNum" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(t_curriculum.id)
+		FROM t_curriculum
+		LEFT JOIN t_school ON t_school.id=t_curriculum.school_id
+		LEFT JOIN (
+			SELECT
+				t_cur_comment.curriculum_id cId,
+				COUNT(t_cur_comment.id) commentNum
+			FROM 
+				t_cur_comment
+			GROUP BY t_cur_comment.curriculum_id
+		) sum_data ON sum_data.cId=t_curriculum.id
+		WHERE t_curriculum.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="lid > 0">
+			AND t_curriculum.role_id = #{lid}
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="CurriculumResultMap">
+		SELECT t_curriculum.*,
+		t_school.school_name schoolName,
+		sum_data.*
+		FROM t_curriculum
+		LEFT JOIN t_school ON t_school.id=t_curriculum.school_id
+		LEFT JOIN (
+			SELECT
+				t_cur_comment.curriculum_id cId,
+				COUNT(t_cur_comment.id) commentNum
+			FROM 
+				t_cur_comment
+			GROUP BY t_cur_comment.curriculum_id
+		) sum_data ON sum_data.cId=t_curriculum.id
+		WHERE t_curriculum.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="lid > 0">
+			AND t_curriculum.role_id = #{lid}
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+</mapper>

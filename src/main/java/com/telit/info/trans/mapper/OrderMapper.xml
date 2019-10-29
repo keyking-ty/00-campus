@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.OrderMapper">
+	<resultMap id="OrderViewResultMap" type="com.telit.info.data.app.OrderView">
+		<result column="id" property="id" />
+		<result column="school_id" property="schoolId" />
+		<result column="schoolName" property="schoolName" />
+		<result column="operator" property="operator" />
+		<result column="icon_url" property="iconUrl" />
+		<result column="net_type" property="netType" />
+		<result column="last_time" property="lastTime" />
+		<result column="band_width" property="bandWidth" />
+		<result column="key_word" property="keyWord" />
+		<result column="price" property="price" />
+		<result column="realy_price" property="realyPrice" />
+		<result column="divide_num" property="divideNum" />
+		<result column="hot_order" property="hotOrder" />
+		<result column="description" property="description" />
+		<result column="content" property="content" />
+		<result column="statu" property="statu" />
+		<result column="auther" property="auther" />
+		<result column="business_activity" property="businessActivity" />
+		<result column="visit_activity" property="visitActivity" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_order
+		INNER JOIN t_pay_tran ON t_order.id=t_pay_tran.order_id
+		INNER JOIN t_app_user ON t_app_user.id=t_order.user_id
+		INNER JOIN t_net_meal ON t_net_meal.id=t_app_user.meal_id
+		WHERE t_net_meal.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="operators != null">
+			AND t_net_meal.operator IN (${operators})
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="OrderViewResultMap">
+		SELECT 
+		t_order.id id,
+		t_app_user.real_name name,
+		t_order.order_num orderNum,
+		t_pay_tran.out_trade_no payId,
+		t_order.order_type orderType,
+		t_order.order_sta orderSta,
+		t_order.content content,
+		t_order.ori_price oriPrice,
+		t_order.pay_price payPrice,
+		t_pay_tran.pay_type payType,
+		t_pay_tran.pay_date payDate
+		FROM t_order
+		INNER JOIN t_pay_tran ON t_order.id=t_pay_tran.order_id
+		INNER JOIN t_app_user ON t_app_user.id=t_order.user_id
+		INNER JOIN t_net_meal ON t_app_user.meal_id=t_net_meal.id
+		WHERE t_net_meal.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="operators != null">
+			AND t_net_meal.operator IN (${operators})
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+</mapper>

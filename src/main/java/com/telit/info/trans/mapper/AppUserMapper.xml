@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.AppUserMapper">
+	<resultMap id="AppUserResultMap" type="com.telit.info.data.app.AppUser">
+		<result column="id" property="id" />
+		<result column="school_id" property="schoolId" />
+		<result column="user_type" property="userType" />
+		<result column="login_name" property="loginName" />
+		<result column="login_pwd" property="loginPwd" />
+		<result column="authen_sta" property="authenSta" />
+		<result column="id_card" property="idCard" />
+		<result column="real_name" property="realName" />
+		<result column="idcard_posimg" property="idcardPosimg" />
+		<result column="idcard_sideimg" property="idcardSideimg" />
+		<result column="stucard_posimg" property="stucardPosimg" />
+		<result column="stucard_sideimg" property="stucardSideimg" />
+		<result column="mobile" property="mobile" />
+		<result column="account" property="account" />
+		<result column="sex" property="sex" />
+		<result column="meal_id" property="mealId" />
+		<result column="start_date" property="startDate" />
+		<result column="end_date" property="endDate" />
+		<result column="head_img" property="headImg" />
+		<result column="province" property="province" />
+		<result column="city" property="city" />
+		<result column="area" property="area" />
+		<result column="user_adress" property="userAdress" />
+		<result column="reg_date" property="regDate" />
+		<result column="fade" property="fade" />
+		<result column="major" property="major" />
+		<result column="balance" property="balance" />
+		<result column="meal_card" property="mealCard" />
+		<result column="nick_name" property="nickName" />
+		<result column="schoolName" property="schoolName" />
+		<result column="mealName" property="mealName" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_app_user
+		LEFT JOIN t_school ON t_school.id=t_app_user.school_id
+		LEFT JOIN t_net_meal ON t_net_meal.id=t_app_user.meal_id
+		WHERE t_app_user.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="AppUserResultMap">
+		SELECT t_app_user.*,
+		t_school.school_name schoolName,
+		t_net_meal.name mealName
+		FROM t_app_user
+		LEFT JOIN t_school ON t_school.id=t_app_user.school_id
+		LEFT JOIN t_net_meal ON t_net_meal.id=t_app_user.meal_id
+		WHERE t_app_user.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+	<select id="queryMeals" resultMap="AppUserResultMap">
+		SELECT * FROM t_app_user WHERE t_app_user.meal_id > 2
+	</select>
+	<update id="updateTimeOut">
+		UPDATE t_app_user SET t_app_user.meal_id=2 
+		WHERE t_app_user.id IN
+		<foreach collection="ids" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</update>
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.telit.info.trans.mapper.NetMealMapper">
+	<resultMap id="NetMealResultMap" type="com.telit.info.data.business.NetMeal">
+		<result column="id" property="id" />
+		<result column="school_id" property="schoolId" />
+		<result column="schoolName" property="schoolName" />
+		<result column="operator" property="operator" />
+		<result column="icon_url" property="iconUrl" />
+		<result column="net_type" property="netType" />
+		<result column="last_time" property="lastTime" />
+		<result column="band_width" property="bandWidth" />
+		<result column="key_word" property="keyWord" />
+		<result column="price" property="price" />
+		<result column="realy_price" property="realyPrice" />
+		<result column="divide_num" property="divideNum" />
+		<result column="hot_order" property="hotOrder" />
+		<result column="inner_order" property="innerOrder" />
+		<result column="description" property="description" />
+		<result column="content" property="content" />
+		<result column="statu" property="statu" />
+		<result column="auther" property="auther" />
+		<result column="activity_rule" property="activityRule" />
+		<result column="_merge" property="merge" />
+	</resultMap>
+	<resultMap id="UserMealExportResultMap" type="com.telit.info.data.business.UserMealExport">
+		<result column="mealId" property="mealId" />
+		<result column="mealName" property="mealName" />
+		<result column="userName" property="userName" />
+		<result column="schoolName" property="schoolName" />
+		<result column="phone" property="phone" />
+	</resultMap>
+	<select id="queryListCount" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM t_net_meal
+		INNER JOIN t_school ON t_school.id=t_net_meal.school_id
+		WHERE t_net_meal.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="operators != null">
+			AND t_net_meal.operator IN (${operators})
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+	</select>
+	<select id="queryList" resultMap="NetMealResultMap">
+		SELECT t_net_meal.*,
+		t_school.school_name schoolName
+		FROM t_net_meal
+		INNER JOIN t_school ON t_school.id=t_net_meal.school_id
+		WHERE t_net_meal.school_id IN (
+			SELECT t_role_school.school_id FROM t_role_school 
+			WHERE t_role_school.role_id = #{roleId}
+		)
+		<if test="operators != null">
+			AND t_net_meal.operator IN (${operators})
+		</if>
+		<if test="conds != null">
+			AND (${conds})
+		</if>
+		<if test="os != null">
+			ORDER BY ${os}
+		</if>
+		LIMIT #{cur},#{len}
+	</select>
+	<select id="queryExport" resultMap="UserMealExportResultMap">
+		SELECT
+		t_net_meal.id mealId,
+		t_net_meal.name mealName,
+		t_app_user.real_name userName,
+		t_app_user.mobile phone,
+		t_school.school_name schoolName
+		FROM
+		t_app_user
+		LEFT JOIN t_net_meal ON t_app_user.meal_id = t_net_meal.id
+		LEFT JOIN t_school ON t_app_user.school_id = t_school.id
+		WHERE
+		t_app_user.meal_id > 2
+		AND t_net_meal.operator IN(
+			<foreach collection="queryData.operator" item="op" separator=",">
+				#{op}
+			</foreach>
+		) AND t_app_user.school_id IN(
+			<foreach collection="queryData.schoolId" item="school" separator=",">
+				#{school}
+			</foreach>
+		) AND t_net_meal._merge=#{queryData.merge}
+	</select>
+</mapper>
